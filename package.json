@@ -1,0 +1,42 @@
+{
+  "name": "couchdb-indexer",
+  "version": "0.0.0",
+  "description": "Create or update indexes for all of your CouchDB via a single command / call.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mammaldev/couchdb-indexer.git"
+  },
+  "main": "index.js",
+  "bin": {
+    "couchdb-indexer": "bin/cmd.js"
+  },
+  "scripts": {},
+  "keywords": [
+    "couch",
+    "couchdb",
+    "database",
+    "active",
+    "tasks",
+    "_active_tasks",
+    "index",
+    "indexer",
+    "indexes",
+    "design",
+    "document",
+    "view",
+    "Q",
+    "Qouch",
+    "promise"
+  ],
+  "author": {
+    "name": "Nick Cartwright",
+    "email": "nick@mammal.io",
+    "url": "http://mammal.io"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "minimist": "^1.1.0",
+    "q": "^1.1.2",
+    "qouch": "git://github.com/mammaldev/qouch#v0.5.0"
+  }
+}

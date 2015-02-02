@@ -1,0 +1,30 @@
+
+USAGE
+  
+  couchdb-indexer [options] <database_url>
+
+DESCRIPTION
+
+  Triggers indexing of all views on a CouchDB database by querying 1 view from each design document that contains one.
+
+  Exits on completion.
+
+OPTIONS
+
+  <database_url>
+    Can be supplied in various formats:
+
+      Full URL
+
+      {host}/{database_name} - inferred protocol: http
+
+      :{port}/{database_name} - inferred protocol: http; inferred hostname: 127.0.0.1
+
+      {database_name} - inferred protocol: http; inferred host: 127.0.0.1:5984
+
+  
+  --max-active-tasks=<integer>
+    View queries are queued so as to attempt to limit the maximum number of concurrent active tasks on the CouchDB server.
+    Active tasks are queried via route: GET {server_url}/_active_tasks.
+
+    By default, there is no maximum - i.e. all view queries are sent simultaneously.
