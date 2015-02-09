@@ -8,7 +8,7 @@
   },
   "main": "index.js",
   "bin": {
-    "couchdb-indexer": "bin/cmd.js"
+    "ixcouch": "bin/cmd.js"
   },
   "scripts": {},
   "keywords": [

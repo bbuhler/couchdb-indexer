@@ -1,7 +1,7 @@
 
 USAGE
   
-  couchdb-indexer [options] <database_url>
+  ixcouch [options] <database_url>
 
 DESCRIPTION
 
