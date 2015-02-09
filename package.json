@@ -1,6 +1,6 @@
 {
   "name": "couchdb-indexer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Create or update indexes for all of your CouchDB via a single command / call.",
   "repository": {
     "type": "git",
