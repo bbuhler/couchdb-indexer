@@ -4,39 +4,43 @@ var Qouch = require('qouch');
 
 /**
  * Entry Point - supports promises and callbacks
- *
  * @param {String|Qouch} [db] - either database URL or Qouch instance
- * @param {Number} [maxActiveTasks=Infinity] - limit number of concurrent couch server active tasks - see GET {couch_server_url}/_active_tasks
+ * @param {Object} [options] - options
+ * @param {String|RegExp} [options.filter=null] - index only design docs with names matching RegExp filter
+ * @param {Number} [options.maxActiveTasks=Infinity] - limit number of concurrent couch server active tasks - see GET {couch_server_url}/_active_tasks
  * @param {Function} [callback=undefined]
  */
-exports = module.exports = function ( db, maxActiveTasks, callback ) {
+exports = module.exports = function ( db, options, callback ) {
   var infinity = Math.min();
 
-  if ( typeof maxActiveTasks === 'function' ) {
-    callback = maxActiveTasks;
-    maxActiveTasks = void 0;
-  }
+  var qouchDb = db instanceof Qouch ?
+    db :
+    new Qouch(db, new Agent({ maxSockets: infinity }));
 
-  if ( isNaN(maxActiveTasks) ) {
-    maxActiveTasks = infinity;
-  }
+  var opts = options && typeof options === 'object' ?
+    options :
+    {};
 
-  if ( typeof callback !== 'function' ) {
-    callback = void 0;
-  }
+  var maxActiveTasks = isNaN(opts.maxActiveTasks) ?
+    infinity :
+    opts.maxActiveTasks;
 
-  if ( !( db instanceof Qouch ) ) {
-    db = new Qouch(db, new Agent({ maxSockets: infinity }));
-  }
+  var filterRE = opts.filter instanceof RegExp ?
+    opts.filter :
+    new RegExp(typeof opts.filter === 'string' ? opt.filter : '.*');
 
-  return getViews(db)
-  .then(queryViews.bind(null, db, maxActiveTasks))
+  var cb = typeof callback === 'function' ?
+    callback :
+    ( typeof options === 'function' ? options : void 0 );
+
+  return getViews(qouchDb, filterRE)
+  .then(queryViews.bind(null, qouchDb, maxActiveTasks))
   .then(function success () {
-    callback && callback();
+    cb && cb();
   })
   .fail(function ( err ) {
-    if ( callback ) {
-      return callback(err);
+    if ( cb ) {
+      return cb(err);
     }
     throw err;
   });
@@ -46,19 +50,22 @@ exports = module.exports = function ( db, maxActiveTasks, callback ) {
 /**
  * gets array of objects representing one view per design doc
  *
- * @param {Qouch} [db]
+ * @private
+ * @param {Qouch} db
+ * @param {RegExp} filter - only return design docs with name confroming to pattern filter
  * @returns {Promise * Array.{ designDoc: String, view: String }}
  */
-function getViews ( db ) {
+function getViews ( db, filter ) {
   return db.designDocs()
   .then(function ( designDocs ) {
 
     return designDocs.reduce(function ( arr, doc ) {
+      var name = doc._id.match(/^_design\/(.*)/)[ 1 ];
       var aViewName = doc.views && Object.keys(doc.views)[ 0 ];
 
-      if ( aViewName ) {
+      if ( filter.test(name) && aViewName ) {
         arr.push({
-          designDoc: doc._id.match(/^_design\/(.*)/)[ 1 ],
+          designDoc: name,
           view: aViewName
         });
       }
@@ -72,9 +79,10 @@ function getViews ( db ) {
 /**
  * queries views to trigger indexing of all views on respective design documents. Queues queries so as not to exceed maxActiveTasks
  *
- * @param {Qouch} [db]
- * @param {Number} [maxActiveTasks]
- * @param {Array.{ designDoc: String, view: String }} [outstanding]
+ * @private
+ * @param {Qouch} db
+ * @param {Number} maxActiveTasks
+ * @param {Array.{ designDoc: String, view: String }} outstanding
  * @returns {Promise * undefined}
  */
 function queryViews ( db, maxActiveTasks, outstanding ) {

@@ -1,6 +1,6 @@
 
 USAGE
-  
+
   ixcouch [options] <database_url>
 
 DESCRIPTION
@@ -11,7 +11,17 @@ DESCRIPTION
 
 OPTIONS
 
-  <database_url>
+  --filter=<string>
+    Only index views on design docs whose names match JavaScript RegExp
+
+  --max-active-tasks=<integer>
+    View queries are queued so as to attempt to limit the maximum number of concurrent active tasks on the CouchDB server.
+    Active tasks are queried via route: GET {server_url}/_active_tasks.
+
+    By default, there is no maximum - i.e. all view queries are sent simultaneously.
+
+DATABASE URL
+
     Can be supplied in various formats:
 
       Full URL
@@ -21,10 +31,3 @@ OPTIONS
       :{port}/{database_name} - inferred protocol: http; inferred hostname: 127.0.0.1
 
       {database_name} - inferred protocol: http; inferred host: 127.0.0.1:5984
-
-  
-  --max-active-tasks=<integer>
-    View queries are queued so as to attempt to limit the maximum number of concurrent active tasks on the CouchDB server.
-    Active tasks are queried via route: GET {server_url}/_active_tasks.
-
-    By default, there is no maximum - i.e. all view queries are sent simultaneously.

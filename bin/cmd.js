@@ -5,6 +5,7 @@ var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
 var dbURL = argv._[ 0 ];
 var maxActiveTasks = argv['max-active-tasks'];
+var filter = argv['filter'] || '';
 
 if ( argv.version ) {
   return console.log(require('../package.json').version);
@@ -39,7 +40,10 @@ if ( dbURL !== argv._[ 0 ] ) {
   console.log('Inferring parts of database URL not supplied: %s -> %s\n', argv._[ 0 ], dbURL);
 }
 
-return indexer(dbURL, maxActiveTasks)
+return indexer(dbURL, {
+  maxActiveTasks: maxActiveTasks,
+  filter: filter
+})
 .then(function () {
   console.log('All views indexed for database: %s', dbURL);
 })
