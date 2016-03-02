@@ -13,9 +13,9 @@ var Qouch = require('qouch');
 exports = module.exports = function ( db, options, callback ) {
   var infinity = Math.min();
 
-  var qouchDb = db instanceof Qouch ?
-    db :
-    new Qouch(db, new Agent({ maxSockets: infinity }));
+  var qouchDb = typeof db === 'string' ?
+    new Qouch(db, new Agent({ maxSockets: infinity })) :
+    db;
 
   var opts = options && typeof options === 'object' ?
     options :
