@@ -27,7 +27,7 @@ exports = module.exports = function ( db, options, callback ) {
 
   var filterRE = opts.filter instanceof RegExp ?
     opts.filter :
-    new RegExp(typeof opts.filter === 'string' ? opt.filter : '.*');
+    new RegExp(typeof opts.filter === 'string' ? opts.filter : '.*');
 
   var cb = typeof callback === 'function' ?
     callback :
