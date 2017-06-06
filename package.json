@@ -39,6 +39,6 @@
   "dependencies": {
     "minimist": "^1.1.0",
     "q": "^1.1.2",
-    "qouch": "git://github.com/mammaldev/qouch#v0.5.0"
+    "qouch": "bbuhler/qouch#master"
   }
 }
