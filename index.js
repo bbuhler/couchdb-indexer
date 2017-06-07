@@ -60,7 +60,7 @@ function getViews ( db, filter ) {
   .then(function ( designDocs ) {
 
     return designDocs.reduce(function ( arr, doc ) {
-      var name = doc._id.match(/^_design\/(.*)/)[ 1 ];
+      var name = (doc._id || doc.id).match(/^_design\/(.*)/)[ 1 ];
       var aViewName = doc.views && Object.keys(doc.views)[ 0 ];
 
       if ( filter.test(name) && aViewName ) {
